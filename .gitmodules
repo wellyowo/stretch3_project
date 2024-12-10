@@ -1,0 +1,9 @@
+[submodule "stretch_mujoco"]
+	path = stretch_mujoco
+	url = git@github.com:hrc-pme/stretch_mujoco.git
+[submodule "ros2_ws/src/mujoco_ros2_control"]
+	path = ros2_ws/src/mujoco_ros2_control
+	url = git@github.com:hrc-pme/mujoco_ros2_control.git
+[submodule "ros2_ws/src/topic_tools"]
+	path = ros2_ws/src/topic_tools
+	url = git@github.com:hrc-pme/topic_tools.git
