@@ -126,29 +126,34 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
     rm -rf /var/lib/apt/lists/*
 
 ###################################### pytorch ##################################
-RUN pip install torch torchvision torchaudio 
+RUN python3 -m pip install --ignore-installed sympy
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
+################################## dep of mujoco ros2 ############################
+RUN apt-get update && \
+    apt-get install -q -y --no-install-recommends \
+    libglfw3-dev
+ENV MUJOCO_VERSION 3.2.6
+RUN apt-get install -y libglfw3-dev
+RUN wget https://github.com/google-deepmind/mujoco/releases/download/$MUJOCO_VERSION/mujoco-$MUJOCO_VERSION-linux-x86_64.tar.gz
+RUN tar -xzf mujoco-3.2.6-linux-x86_64.tar.gz
 
 ##################################### stretch3 MUJOCO ###########################
-RUN git clone https://github.com/hello-robot/stretch_mujoco && cd stretch_mujoco
-RUN pip install -e . && cd ..
+RUN git clone https://github.com/hello-robot/stretch_mujoco && cd stretch_mujoco && pip install -e .
 
 ################################### robocasa (more mojoco scene)##################
-RUN git clone https://github.com/ARISE-Initiative/robosuite -b robocasa_v0.1 && robosuite
-RUN pip install -e && cd ../
+# RUN git clone https://github.com/ARISE-Initiative/robosuite -b robocasa_v0.1 && cd robosuite && pip install -e .
 
-RUN git clone https://github.com/robocasa/robocasa && cd robocasa
-RUN pip install -e .
-RUN pip install -c numba numba -y
-RUN python robocasa/scripts/download_kitchen_assets.py  
-RUN python robocasa/scripts/setup_macros.py   
+# RUN git clone https://github.com/robocasa/robocasa && cd robocasa && pip install -e . 
+# RUN pip install numba
 
 ################################## remove the repo ###############################
 
 
 ################## setup auth & set env param into .bashrc########################
 RUN echo "root ALL=(ALL)  ALL" >> /etc/sudoers \
-    && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME}/.bashrc 
+    && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME}/.bashrc \ 
+    && echo export MUJOCO_DIR=/mujoco-$MUJOCO_VERSION >> ${HOME}/.bashrc
 
 ENV XLA_PYTHON_CLIENT_PREALLOCATE=false
 
