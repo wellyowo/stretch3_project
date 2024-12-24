@@ -7,3 +7,33 @@
 [submodule "ros2_ws/src/topic_tools"]
 	path = ros2_ws/src/topic_tools
 	url = git@github.com:hrc-pme/topic_tools.git
+[submodule "ros2_ws/src/audio_common"]
+	path = ros2_ws/src/audio_common
+	url = https://github.com/hrc-pme/audio_common.git
+[submodule "ros2_ws/src/respeaker_ros2"]
+	path = ros2_ws/src/respeaker_ros2
+	url = https://github.com/hrc-pme/respeaker_ros2.git
+[submodule "ros2_ws/src/rosbridge_suite"]
+	path = ros2_ws/src/rosbridge_suite
+	url = git@github.com:hrc-pme/rosbridge_suite.git
+[submodule "ros2_ws/src/ros2_numpy"]
+	path = ros2_ws/src/ros2_numpy
+	url = git@github.com:hrc-pme/ros2_numpy.git
+[submodule "ros2_ws/src/sllidar_ros2"]
+	path = ros2_ws/src/sllidar_ros2
+	url = git@github.com:hrc-pme/sllidar_ros2.git
+[submodule "ros2_ws/src/tf2_web_republisher_py"]
+	path = ros2_ws/src/tf2_web_republisher_py
+	url = git@github.com:hrc-pme/tf2_web_republisher_py.git
+[submodule "ros2_ws/src/stretch_web_teleop"]
+	path = ros2_ws/src/stretch_web_teleop
+	url = git@github.com:hrc-pme/stretch_web_teleop.git
+[submodule "ros2_ws/src/stretch_ros2"]
+	path = ros2_ws/src/stretch_ros2
+	url = git@github.com:hrc-pme/stretch_ros2.git
+[submodule "stretch_tool_share"]
+	path = stretch_tool_share
+	url = git@github.com:hrc-pme/stretch_tool_share.git
+[submodule "stretch_tutorials"]
+	path = stretch_tutorials
+	url = git@github.com:hrc-pme/stretch_tutorials.git
