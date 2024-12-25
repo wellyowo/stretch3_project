@@ -83,7 +83,6 @@ RUN apt-get update && \
     gstreamer1.0-plugins-ugly \
     libgstreamer1.0-dev \
     libgstreamer-plugins-base1.0-dev \
-    libglfw3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y python3-pyaudio || pip install pyaudio
@@ -124,7 +123,8 @@ RUN apt-get update && apt-get upgrade pip -y && \
 
 ###################################### ros2 ####################################
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | \
+    tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
     apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-desktop \
     ros-${ROS_DISTRO}-ros2-control \
@@ -174,10 +174,55 @@ WORKDIR /home/${NB_USER}/ros2_ws
 RUN rosdep init && rosdep update
 RUN rosdep install --from-paths src --ignore-src -i -r -n -y
 
+###################################### Install librealsense2 #####################################
+# # Set the version of the RealSense library
+ENV LIBREALSENSE_VERSION=2.55.1
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libssl-dev \
+    libusb-1.0-0-dev \
+    libgtk-3-dev \
+    libglfw3-dev \
+    libgl1-mesa-dev \
+    libglu1-mesa-dev \
+    at \
+    libudev-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clone and build librealsense from source
+WORKDIR /home/${NB_USER}/repos
+RUN git clone https://github.com/IntelRealSense/librealsense.git && \
+    cd librealsense && \
+    git checkout v${LIBREALSENSE_VERSION} && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make -j$($(nproc)-1) install && \
+    ldconfig
+
+WORKDIR /home/${NB_USER}/repos
+RUN rm -rf librealsense
+
+#################################### check stretch3 environment & update dependency##################################
+RUN pip3 install -U hello-robot-stretch-diagnostics
+
+
 ################################## setup auth & set env param into .bashrc########################
 RUN echo "root ALL=(ALL)  ALL" >> /etc/sudoers \
     && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME}/.bashrc \ 
     && echo export MUJOCO_DIR=/home/${NB_USER}/mujoco/mujoco-${MUJOCO_VERSION} >> ${HOME}/.bashrc
+
+# Add environment variable setup to .bashrc
+RUN echo '######################' >> ~/.bashrc && \
+    echo '# STRETCH BASHRC SETUP' >> ~/.bashrc && \
+    echo '######################' >> ~/.bashrc && \
+    echo 'export HELLO_FLEET_PATH=/home/hrc/stretch3_project/stretch_user' >> ~/.bashrc && \
+    echo 'export HELLO_FLEET_ID=stretch-se3-3092' >> ~/.bashrc && \
+    echo 'export PATH=${PATH}:~/.local/bin' >> ~/.bashrc && \
+    echo 'export LRS_LOG_LEVEL=None #Debug' >> ~/.bashrc && \
+    echo "export PYTHONWARNINGS='ignore:setup.py install is deprecated,ignore:Invalid dash-separated options,ignore:pkg_resources is deprecated as an API,ignore:Usage of dash-separated'" >> ~/.bashrc && \
+    echo 'export _colcon_cd_root=/home/hrc/stretch3_project/ros2_ws' >> ~/.bashrc && \
+    echo 'source /usr/share/colcon_cd/function/colcon_cd.sh' >> ~/.bashrc
 
 ENV XLA_PYTHON_CLIENT_PREALLOCATE=false
 

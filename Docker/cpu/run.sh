@@ -9,7 +9,7 @@ IMG="${REPOSITORY}:${TAG}"
 
 USER_NAME="hrc"
 REPO_NAME="stretch3_project"
-CONTAINER_NAME="stretch3-2204-gpu"
+CONTAINER_NAME="stretch3-2204-cpu"
 
 CONTAINER_ID=$(docker ps -aqf "ancestor=${IMG}")
 
@@ -45,7 +45,6 @@ fi
 docker run \
   -it \
   --rm \
-  --runtime=nvidia \
   -e DISPLAY \
   -e XAUTHORITY=$XAUTH \
   -e REPO_NAME=$REPO_NAME \
@@ -56,6 +55,7 @@ docker run \
   -v "/home/${USER}/${REPO_NAME}:/home/${USER_NAME}/${REPO_NAME}" \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
   -v "/etc/localtime:/etc/localtime:ro" \
+  -v /etc/udev/rules.d:/etc/udev/rules.d:ro \
   -v "/dev:/dev" \
   -v "/var/run/docker.sock:/var/run/docker.sock" \
   -v "/usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/nvidia_icd.json" \
