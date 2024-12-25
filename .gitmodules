@@ -37,3 +37,6 @@
 [submodule "stretch_tutorials"]
 	path = stretch_tutorials
 	url = git@github.com:hrc-pme/stretch_tutorials.git
+[submodule "ros2_ws/src/realsense-ros"]
+	path = ros2_ws/src/realsense-ros
+	url = git@github.com:hrc-pme/realsense-ros.git
